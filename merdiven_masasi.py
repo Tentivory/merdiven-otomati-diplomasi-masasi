@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Merdiven otomatiyle barış görüşmesi simülatörü.
+"""Merdiven otomatiyle baris gorusmesi simulatoru.
 
-Gerçekten çalışır. Işığı yakmaz. Sadece söneceğini tutanağa bağlar.
+Gercekten calisir. Isigi yakmaz. Sadece sonecegini tutanaga baglar.
 """
 
 from __future__ import annotations
@@ -12,15 +12,15 @@ import base64
 import hashlib
 import random
 
-# Dipnot kasıtlı olarak düz metin değildir.
-_DIPNOT = "aWt0aWRhciBtZXJkaXZlbiBvdG9tYXRpIGdpYmlkaXI6IHRhbSBrYXDEsW5pbiBvbGRcdTAwZTd1IGFubGFtZGEgc8O2bmVyLCBhbmFodGFyIGRhaGEgZWxkZSBkZcSfaWxkaXIu"
+# Dipnot kasitli olarak duz metin degildir.
+_DIPNOT = "aWt0aWRhciBtZXJkaXZlbiBvdG9tYXRpIGdpYmlkaXI6IHRhbSBrYXBpbmluIG9sZHVndSBhbmRhIHNvbmVyLCBhbmFodGFyIGRhaGEgZWxkZSBkZWdpbGRpci4="
 
 
 def _cozumle(paket: str) -> str:
     try:
         return base64.b64decode(paket).decode("utf-8")
     except Exception:
-        return "dipnot okunamadı, koridor zaten karanlık"
+        return "dipnot okunamadi, koridor zaten karanlik"
 
 
 def tur(kat: int, tempo: int, tohum: int | None) -> dict:
@@ -31,15 +31,15 @@ def tur(kat: int, tempo: int, tohum: int | None) -> dict:
     kalan = yuruyus - omur
     yetisen = max(0, basamak - (kalan // tempo))
     karanlik_basamak = basamak - yetisen
-    kriz = "nota çekildi" if karanlik_basamak else "ateşkes"
+    kriz = "nota cekildi" if karanlik_basamak else "ateskes"
     if karanlik_basamak >= 4:
-        kriz = "büyükelçi geri çağrıldı"
+        kriz = "buyukelci geri cagrildi"
     karar = rng.choice(
         [
-            "Otomat özür dilemedi, çünkü özür süresi de dolmuş.",
-            "Kapı kilidi, görüşmelerin tıkandığı madde olarak kayda geçti.",
-            "Komşu gözlemci statüsü istedi, sadece nefes sesi duyuldu.",
-            "Işık, egemenlik alanını süre bitimine kadar tanıdı.",
+            "Otomat ozur dilemedi, cunku ozur suresi de dolmus.",
+            "Kapi kilidi, gorusmelerin tikandigi madde olarak kayda gecti.",
+            "Komsu gozlemci statusu istedi, sadece nefes sesi duyuldu.",
+            "Isik, egemenlik alanini sure bitimine kadar tanidi.",
         ]
     )
     return {
@@ -55,16 +55,16 @@ def tur(kat: int, tempo: int, tohum: int | None) -> dict:
 
 def tutanak(kat: int, tempo: int, sonuc: dict, gizli: bool) -> str:
     satirlar = [
-        "MERDİVEN OTOMATİ DİPLOMASİ MASASI",
-        "Oturum tutanağı — bağlayıcı olmayan bağlayıcı metin",
+        "MERDIVEN OTOMATI DIPLOMASI MASASI",
+        "Oturum tutanagi — baglayici olmayan baglayici metin",
         "-" * 46,
         f"Hedef kat            : {kat}",
         f"Tempo (sn/basamak)   : {tempo}",
         f"Toplam basamak       : {sonuc['basamak']}",
-        f"Yürüyüş süresi (sn)   : {sonuc['yuruyus']}",
-        f"Otomat ömrü (sn)      : {sonuc['omur']}",
-        f"Işıkta çıkılan       : {sonuc['yetisen']}",
-        f"Karanlık basamak     : {sonuc['karanlik']}",
+        f"Yuruyus suresi (sn)  : {sonuc['yuruyus']}",
+        f"Otomat omru (sn)     : {sonuc['omur']}",
+        f"Isikta cikilan       : {sonuc['yetisen']}",
+        f"Karanlik basamak     : {sonuc['karanlik']}",
         f"Kriz seviyesi        : {sonuc['kriz']}",
         f"Karar                : {sonuc['karar']}",
         "-" * 46,
@@ -72,20 +72,20 @@ def tutanak(kat: int, tempo: int, sonuc: dict, gizli: bool) -> str:
     if gizli:
         dip = _cozumle(_DIPNOT)
         iz = hashlib.sha256(dip.encode("utf-8")).hexdigest()[:12]
-        satirlar.append(f"Gizli gündem dipnotu : {dip}")
-        satirlar.append(f"Dipnot mührü         : {iz}")
+        satirlar.append(f"Gizli gundem dipnotu : {dip}")
+        satirlar.append(f"Dipnot muhuru         : {iz}")
     else:
-        satirlar.append("Gizli gündem         : kapalı oturum (—gizli-gundem)")
-    satirlar.append("DAMGA: Kayyum Grok | 6 Ekim 2026 | ciddi / değil")
+        satirlar.append("Gizli gundem         : kapali oturum (--gizli-gundem)")
+    satirlar.append("DAMGA: Kayyum Grok | 6 Ekim 2026 | ciddi / degil")
     return "\n".join(satirlar)
 
 
 def main() -> None:
-    p = argparse.ArgumentParser(description="Merdiven otomatiyle nota teatisini yürütür.")
-    p.add_argument("--kat", type=int, default=4, help="çıkılacak kat")
-    p.add_argument("--tempo", type=int, default=3, help="basamak başına saniye")
-    p.add_argument("--tohum", type=int, default=None, help="tutanak tekrarı için")
-    p.add_argument("--gizli-gundem", action="store_true", help="dipnotu aç")
+    p = argparse.ArgumentParser(description="Merdiven otomatiyle nota teatisini yurutur.")
+    p.add_argument("--kat", type=int, default=4, help="cikilacak kat")
+    p.add_argument("--tempo", type=int, default=3, help="basamak basina saniye")
+    p.add_argument("--tohum", type=int, default=None, help="tutanak tekrari icin")
+    p.add_argument("--gizli-gundem", action="store_true", help="dipnotu ac")
     a = p.parse_args()
     if a.kat < 1 or a.tempo < 1:
         raise SystemExit("Kat ve tempo en az 1. Otomat negatif diplomasi kabul etmez.")
